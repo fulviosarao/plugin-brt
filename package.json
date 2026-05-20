@@ -1,0 +1,44 @@
+{
+  "name": "@fulviosarao/plugin-brt",
+  "version": "1.0.0",
+  "description": "Plugin Vendure 3.6+ per integrazione BRT Bartolini — creazione lettere di vettura, etichette e tracking spedizioni",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@vendure/core": "^3.6.1"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^11.1.21",
+    "@types/node": "^20.14.0",
+    "@vendure/core": "3.6.1",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "vendure",
+    "brt",
+    "bartolini",
+    "spedizioni",
+    "corriere",
+    "fulfillment",
+    "plugin"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fulviosarao/plugin-brt.git"
+  }
+}

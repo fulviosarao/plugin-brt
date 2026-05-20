@@ -1,0 +1,47 @@
+export interface BrtPluginOptions {
+    /**
+     * userID fornito da BRT in fase di attivazione.
+     * Corrisponde al campo "account.userID" nella BRT REST API.
+     */
+    userId: string;
+
+    /**
+     * Password fornita da BRT in fase di attivazione.
+     * Corrisponde al campo "account.password" nella BRT REST API.
+     */
+    password: string;
+
+    /**
+     * Codice cliente mittente (campo BRT VABCCM), numero intero a 7 cifre.
+     * Fornito da BRT. Es: 1234567
+     */
+    senderCustomerCode: number;
+
+    /**
+     * Linea di partenza (deposito BRT di competenza), numero intero.
+     * Fornito da BRT. Es: 201 (Bologna), 080 (Milano), 310 (Roma).
+     */
+    departureDepot: number;
+
+    /**
+     * Tipo porto:
+     *   'DAP' = porto franco (mittente paga la spedizione)
+     *   'EXW' = porto assegnato (destinatario paga)
+     * Default: 'DAP'
+     */
+    deliveryFreightTypeCode?: 'DAP' | 'EXW';
+
+    /**
+     * Formato etichetta di default proposto nel form di fulfillment.
+     *   'PDF' = stampa normale (laser/inkjet), formato 105×74mm
+     *   'ZPL' = stampante termica (Zebra, Dymo, ecc.)
+     * Può essere sovrascritto ordine per ordine dall'operatore.
+     * Default: 'PDF'
+     */
+    defaultLabelFormat?: 'PDF' | 'ZPL';
+}
+
+export const BRT_PLUGIN_OPTIONS = Symbol('BRT_PLUGIN_OPTIONS');
+
+export const BRT_SHIPMENT_URL = 'https://api.brt.it/rest/v1/shipments';
+export const BRT_TRACKING_URL = 'https://api.brt.it/rest/tracking';
