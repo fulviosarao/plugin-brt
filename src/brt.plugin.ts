@@ -2,6 +2,7 @@ import { PluginCommonModule, VendurePlugin } from '@vendure/core';
 import { BRT_PLUGIN_OPTIONS, BrtPluginOptions } from './config/brt-options';
 import { brtFulfillmentHandler } from './brt.handler';
 import { BrtService } from './brt.service';
+import { BrtAutoFulfillmentService } from './brt-auto-fulfillment.service';
 
 /**
  * BrtPlugin — integrazione corriere BRT Bartolini per Vendure 3.6+.
@@ -20,6 +21,7 @@ import { BrtService } from './brt.service';
     imports: [PluginCommonModule],
     providers: [
         BrtService,
+        BrtAutoFulfillmentService,
         {
             provide: BRT_PLUGIN_OPTIONS,
             useFactory: () => BrtPlugin.options,

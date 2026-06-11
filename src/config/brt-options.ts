@@ -39,6 +39,22 @@ export interface BrtPluginOptions {
      * Default: 'PDF'
      */
     defaultLabelFormat?: 'PDF' | 'ZPL';
+
+    /**
+     * Configurazione auto-fulfillment BRT.
+     * Se abilitato, la lettera di vettura viene creata automaticamente quando
+     * un ordine raggiunge lo stato PaymentSettled.
+     */
+    autoFulfillment?: {
+        /** Abilita la creazione automatica. Default: false */
+        enabled: boolean;
+        /** Peso di default in kg usato per tutti gli ordini automatici */
+        weightKG: number;
+        /** Numero di colli di default. Default: 1 */
+        numberOfParcels?: number;
+        /** Formato etichetta. Se omesso usa defaultLabelFormat */
+        labelFormat?: 'PDF' | 'ZPL';
+    };
 }
 
 export const BRT_PLUGIN_OPTIONS = Symbol('BRT_PLUGIN_OPTIONS');
