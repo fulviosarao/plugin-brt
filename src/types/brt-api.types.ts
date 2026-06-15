@@ -27,6 +27,12 @@ export interface BrtCreateData {
     consigneeEMail?: string;
     consigneeMobilePhoneNumber?: string;
     isAlertRequired?: '0' | '1';
+    /**
+     * '0' = spedizione NON in contrassegno. Va dichiarato esplicitamente: il codice
+     * cliente puo' essere condiviso con utenti che usano il contrassegno, e in tal
+     * caso BRT rifiuta la createShipment con -68 "IsCODMandatory" se il flag manca.
+     */
+    isCODMandatory?: '0' | '1';
     serviceType?: string;
     numberOfParcels: number;
     weightKG: number;

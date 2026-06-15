@@ -86,8 +86,13 @@ export const brtFulfillmentHandler = new FulfillmentHandler({
                     consigneeCountryAbbreviationISOAlpha2: consigneeCountry,
                     consigneeTelephone: truncate(addr.phoneNumber, 16) || undefined,
                     isAlertRequired: '0',
+                    isCODMandatory: '0',
                     numberOfParcels: args.numberOfParcels ?? 1,
                     weightKG: args.weightKG,
+                    // BRT richiede anche il riferimento NUMERICO (oltre all'alfanumerico
+                    // = order.code), altrimenti createShipment fallisce con -68
+                    // "numericSenderReference". Derivato dalle cifre dell'id ordine.
+                    numericSenderReference: Number(String(order.id).replace(/\D/g, '')) || undefined,
                     alphanumericSenderReference: truncate(order.code, 15),
                     notes: args.notes ? truncate(args.notes, 70) : undefined,
                 },
