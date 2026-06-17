@@ -56,6 +56,18 @@ import { BrtAutoFulfillmentService } from './brt-auto-fulfillment.service';
                 nullable: true,
                 label: [{ languageCode: 'it' as any, value: 'BRT — Formato etichetta' }],
             },
+            {
+                name: 'brtNumericReference',
+                type: 'string',
+                nullable: true,
+                label: [{ languageCode: 'it' as any, value: 'BRT — Riferimento numerico mittente' }],
+            },
+            {
+                name: 'brtAlphaReference',
+                type: 'string',
+                nullable: true,
+                label: [{ languageCode: 'it' as any, value: 'BRT — Riferimento alfanumerico mittente' }],
+            },
         ];
 
         return config;

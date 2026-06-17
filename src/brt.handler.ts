@@ -65,14 +65,21 @@ export const brtFulfillmentHandler = new FulfillmentHandler({
         const consigneeCountry = truncate(countryCode, 2).toUpperCase();
         const labelFormat = (args.labelFormat as 'PDF' | 'ZPL') || brtService.defaultLabelFormat;
 
+        // Riferimenti mittente: necessari sia in creazione sia in cancellazione.
+        // Vanno memorizzati per poter cancellare la spedizione (delete li richiede).
+        const numericSenderReference = Number(String(order.id).replace(/\D/g, '')) || undefined;
+        const alphanumericSenderReference = truncate(order.code, 15);
+
         let result;
         try {
             result = await brtService.createShipment({
-                isLabelRequired: 'Y',
+                // '1' (stringa) = etichetta richiesta. Con 'Y' BRT NON restituisce
+                // il blocco labels e l'etichetta resta vuota.
+                isLabelRequired: '1',
                 labelParameters: {
                     outputType: labelFormat,
-                    isBorderRequired: 'Y',
-                    isLogoRequired: 'Y',
+                    isBorderRequired: '1',
+                    isLogoRequired: '1',
                 },
                 createData: {
                     departureDepot: brtService.departureDepot,
@@ -92,8 +99,8 @@ export const brtFulfillmentHandler = new FulfillmentHandler({
                     // BRT richiede anche il riferimento NUMERICO (oltre all'alfanumerico
                     // = order.code), altrimenti createShipment fallisce con -68
                     // "numericSenderReference". Derivato dalle cifre dell'id ordine.
-                    numericSenderReference: Number(String(order.id).replace(/\D/g, '')) || undefined,
-                    alphanumericSenderReference: truncate(order.code, 15),
+                    numericSenderReference,
+                    alphanumericSenderReference,
                     notes: args.notes ? truncate(args.notes, 70) : undefined,
                 },
             });
@@ -102,10 +109,21 @@ export const brtFulfillmentHandler = new FulfillmentHandler({
             throw err;
         }
 
-        const label = result.createResponse.labels?.label?.[0];
+        // BRT serializza `label` come array, ma per spedizioni a collo singolo puo'
+        // restituire un oggetto singolo: normalizziamo a array.
+        const rawLabel = result.createResponse.labels?.label;
+        const label = Array.isArray(rawLabel) ? rawLabel[0] : rawLabel;
         const parcelId = label?.parcelID ?? result.createResponse.parcelNumberFrom ?? '';
         const trackingCode = label?.trackingByParcelID ?? parcelId;
         const labelStream = label?.stream ?? '';
+
+        if (!labelStream) {
+            Logger.warn(
+                `Spedizione BRT ${order.code} creata SENZA etichetta (labels assente nella response). ` +
+                    `Verificare isLabelRequired='1' e l'abilitazione stampa etichetta sul codice cliente.`,
+                loggerCtx,
+            );
+        }
 
         Logger.info(`Spedizione BRT ok — ordine ${order.code}, parcelID: ${parcelId}`, loggerCtx);
 
@@ -116,6 +134,9 @@ export const brtFulfillmentHandler = new FulfillmentHandler({
                 brtParcelId: parcelId,
                 brtLabelStream: labelStream,
                 brtLabelFormat: labelFormat,
+                // serve per la cancellazione (delete richiede numericSenderReference)
+                brtNumericReference: numericSenderReference != null ? String(numericSenderReference) : undefined,
+                brtAlphaReference: alphanumericSenderReference,
             } as any,
         };
     },
@@ -126,12 +147,19 @@ export const brtFulfillmentHandler = new FulfillmentHandler({
         const parcelId = (fulfillment.customFields as any)?.brtParcelId;
         if (!parcelId) return;
 
+        const cf = fulfillment.customFields as any;
+        const numericRef = cf?.brtNumericReference ? Number(cf.brtNumericReference) : undefined;
+        const alphaRef = cf?.brtAlphaReference || undefined;
+
         Logger.info(`Cancellazione spedizione BRT parcelID: ${parcelId}`, loggerCtx);
         try {
             await brtService.deleteShipment({
                 deleteData: {
                     senderCustomerCode: brtService.senderCustomerCode,
-                    alphanumericSenderReference: truncate(fulfillment.trackingCode, 15) || undefined,
+                    // BRT identifica la spedizione da cancellare con numericSenderReference
+                    // + alphanumericSenderReference (gli stessi usati in creazione).
+                    numericSenderReference: numericRef,
+                    alphanumericSenderReference: alphaRef,
                 },
             });
         } catch (err: any) {

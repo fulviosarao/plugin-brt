@@ -59,7 +59,9 @@ export class BrtService {
             Logger.warn(`BRT warning ${execMsg.code}: ${execMsg.message}`, loggerCtx);
         }
 
-        const parcelId = result.createResponse.labels?.label?.[0]?.parcelID;
+        const rawLabel = result.createResponse.labels?.label;
+        const firstLabel = Array.isArray(rawLabel) ? rawLabel[0] : rawLabel;
+        const parcelId = firstLabel?.parcelID ?? result.createResponse.parcelNumberFrom;
         Logger.info(`Spedizione BRT creata — parcelID: ${parcelId}`, loggerCtx);
 
         return result;

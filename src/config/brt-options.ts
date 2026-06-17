@@ -60,4 +60,5 @@ export interface BrtPluginOptions {
 export const BRT_PLUGIN_OPTIONS = Symbol('BRT_PLUGIN_OPTIONS');
 
 export const BRT_SHIPMENT_URL = 'https://api.brt.it/rest/v1/shipments';
-export const BRT_TRACKING_URL = 'https://api.brt.it/rest/tracking';
+// L'endpoint tracking REST e' sotto /rest/v1/tracking (non /rest/tracking).
+export const BRT_TRACKING_URL = 'https://api.brt.it/rest/v1/tracking';

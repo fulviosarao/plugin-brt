@@ -5,9 +5,11 @@ export interface BrtAccount {
 
 export interface BrtLabelParameters {
     outputType: 'PDF' | 'ZPL';
-    isBorderRequired?: 'Y' | 'N';
-    isLogoRequired?: 'Y' | 'N';
-    isBarcodeControlRowRequired?: 'Y' | 'N';
+    // BRT accetta SOLO '0'/'1' su questi flag: qualunque altro valore (es. 'Y')
+    // viene silenziosamente forzato a '0'.
+    isBorderRequired?: '0' | '1';
+    isLogoRequired?: '0' | '1';
+    isBarcodeControlRowRequired?: '0' | '1';
     labelFormat?: string;
 }
 
@@ -46,7 +48,10 @@ export interface BrtCreateData {
 export interface BrtCreateRequest {
     account: BrtAccount;
     createData: BrtCreateData;
-    isLabelRequired: 'Y' | 'N';
+    // BRT richiede l'etichetta SOLO se questo campo vale la stringa '1'.
+    // Qualsiasi altro valore ('Y', 'true', ...) = etichetta NON richiesta e il
+    // blocco `labels` non viene restituito nella response.
+    isLabelRequired: '0' | '1';
     labelParameters: BrtLabelParameters;
 }
 
@@ -83,7 +88,8 @@ export interface BrtCreateResponse {
     consigneeCity?: string;
     labels?: {
         label_LENGTH: number;
-        label: BrtLabel[];
+        // BRT puo' restituire un array oppure un singolo oggetto (collo singolo).
+        label: BrtLabel[] | BrtLabel;
     };
 }
 
