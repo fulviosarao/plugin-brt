@@ -1,11 +1,12 @@
 {
   "name": "@fulviosarao/plugin-brt",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Plugin Vendure 3.6+ per integrazione BRT Bartolini — creazione lettere di vettura, etichette e tracking spedizioni",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "ui"
   ],
   "scripts": {
     "build": "tsc",

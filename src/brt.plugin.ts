@@ -80,6 +80,21 @@ export class BrtPlugin {
     static handler = brtFulfillmentHandler;
 
     /**
+     * Estensione admin-ui: aggiunge la card "Etichetta BRT" nel dettaglio ordine
+     * con il pulsante di download dell'etichetta (PDF/ZPL) già generata da BRT.
+     *
+     * `extensionPath` va valorizzato dal progetto che consuma il plugin, puntando
+     * a `node_modules/@fulviosarao/plugin-brt/ui`, es.:
+     * ```ts
+     * { ...BrtPlugin.uiExtensions, extensionPath: path.join(__dirname, '../node_modules/@fulviosarao/plugin-brt/ui') }
+     * ```
+     */
+    static uiExtensions = {
+        id: 'brt-label',
+        providers: ['providers.ts'],
+    };
+
+    /**
      * Inizializza il plugin con le credenziali BRT.
      *
      * @example
